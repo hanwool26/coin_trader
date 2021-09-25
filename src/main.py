@@ -10,5 +10,5 @@ if __name__ == '__main__':
     my_account.connect_account()
     my_account.get_balance()
 
-    event_c = EventCouple('KRW-ETH', 'KRW-XRP', None)
+    event_c = EventCouple('KRW-XTZ', 'KRW-XRP', None)
     event_c.start()

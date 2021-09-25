@@ -7,7 +7,9 @@ class Coin:
         pass
 
     def get_current_price(self):
-        print(pyupbit.get_current_price(self.ticker))
         return pyupbit.get_current_price(self.ticker)
+
+    def get_ticker(self) -> str:
+        return self.ticker
 
 

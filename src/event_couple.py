@@ -1,15 +1,19 @@
 import threading
 import time
+import util
+import pyupbit
+from event import *
 from coin import *
 
-class EventCouple():
-    COHERENCE = {
+class EventCouple(Event):
+    COHERENCE = { # show chain coherence
         'welldone' : 100,
         'medium': 50,
         'rare': 20,
     }
-    WAIT_TIME = [60, 180, 300]
+    WAIT_TIME = [180, 300, 600]
     def __init__(self, primary_ticker, chain_ticker, coherence):
+        print(type(primary_ticker), primary_ticker)
         self.primary_coin = Coin(primary_ticker)
         self.chain_coin = Coin(chain_ticker)
         self.coherence = self.COHERENCE['medium']
@@ -17,23 +21,23 @@ class EventCouple():
         self.__running = False
 
     def __monitoring(self, coherence):
-        print('start monitoring')
-        current_price = self.primary_coin.get_current_price()
-        base_price = current_price
+        print('start monitoring', self.primary_coin.get_ticker())
+        base_price = self.primary_coin.get_current_price()
 
-        print('in while')
         while self.__running:
-            print(current_price)
-            if ((current_price - base_price)//base_price)*100 >= 10:
+            current_price = self.primary_coin.get_current_price()
+            if (util.get_increase_rate(current_price, base_price)) >= 0.2:
                 print('Primary Coin begin to pump up, ready to buy chain coin')
                 pass
             time.sleep(self.wait_time)
-            current_price = self.primary_coin.get_current_price()
+            base_price = self.primary_coin.get_current_price()
+
+    def close_thread(self):
+        self.__running = False
 
     def start(self) -> None:
         self.__running = True
         t = threading.Thread(target=self.__monitoring, args=(self.coherence, ))
-        t.daemon = True
         t.start()
 
 
