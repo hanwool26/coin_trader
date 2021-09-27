@@ -1,5 +1,5 @@
 import pyupbit
-from coin import *
+from src.coin import *
 access_key = "xEGugKzhLrLRLa2mQMwuJfIQJBYjdA8o2CoCs83x"
 secret_key = "xh2EOARx60jwjZWQ0IXy0LODLqaIYgZlLxFcbyax"
 print(type(access_key))

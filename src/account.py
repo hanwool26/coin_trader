@@ -5,15 +5,33 @@ class Account():
         self.access_key = access_key
         self.secret_key = secret_key
         self.balance = 0
+        self.upbit = None
 
     def get_balance(self) -> int:
-        balance_info = self.my_upbit.get_balances()[0]
+        balance_info = self.upbit.get_balances()[0]
         self.balance = (int(balance_info['balance'].split('.')[0]))
         print(f"balance : {self.balance} 원")
         return self.balance
 
+    def buy(self, ticker, price, amount):
+        if self.get_balance() < 0:
+            raise Exception('no enough blanace')
+        else :
+            ret = self.upbit.buy_limit_order(ticker, price, amount)
+            print(f'success to buy {amount} of {ticker} at {price}')
+
+    def sell(self, ticker, price, amount):
+        ret = self.upbit.sell_limit_order(ticker, price, amount)
+        if ret > 0:
+            print(f'success to sell {amount} of {ticker} at {price}')
+        else :
+            print(f'failed to sell {ticker}')
+
     def connect_account(self):
         try:
-            self.my_upbit = pyupbit.Upbit(self.access_key, self.secret_key)
+            self.upbit = pyupbit.Upbit(self.access_key, self.secret_key)
         except Exception as e:
             print(e)
+
+        if self.upbit != None:
+            print('Success to access my account')

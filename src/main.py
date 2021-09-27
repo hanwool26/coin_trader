@@ -1,7 +1,9 @@
 import pyupbit
-from account import *
-from config import *
-from event_couple import *
+from src.account import *
+from src.config import *
+from src.event_couple import *
+from src.manager import *
+
 if __name__ == '__main__':
     config = Config()
     config.load_config()
@@ -10,5 +12,6 @@ if __name__ == '__main__':
     my_account.connect_account()
     my_account.get_balance()
 
-    event_c = EventCouple('KRW-XTZ', 'KRW-XRP', None)
-    event_c.start()
+    manager = Manager(my_account)
+    manager.do_start([('KRW-XRP', 'KRW-ETH'),], 'couple')
+
