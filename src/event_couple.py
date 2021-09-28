@@ -6,17 +6,18 @@ from src.event import *
 from src.coin import *
 
 TIME_OUT = 60
+INTERVAL = 180
 
 class EventCouple(Event):
     BUYING_AMOUNT = { # show chain coherence
         'welldone' : 1,
         'medium': 0.5,
-        'rare': 0.2,
+        'rare': 0.05,
     }
     TARGET_PROFIT = {
         'welldone': 5,
         'medium' : 3,
-        'rare' : 0.2,
+        'rare' : 1,
     }
     def __init__(self, account, primary_ticker, chain_ticker, coherence):
         # super
@@ -28,7 +29,7 @@ class EventCouple(Event):
         self.chain_coin = Coin(chain_ticker)
         self.coherence = self.BUYING_AMOUNT['rare']
         self.target_per = self.TARGET_PROFIT['rare']
-        self.wait_time = 5 # secs
+        # self.wait_time = 5 # secs
 
         self.__running = False
 
@@ -49,13 +50,10 @@ class EventCouple(Event):
                 break
             time.sleep(1)
 
-        with self.trade_lock:
-            print(f'bought (coin : {ticker}, price : {buying_price}, amount : {amount}')
-            t = threading.Thread(target=self.__selling_target, args=(ticker, buying_price, amount, target,))
-            t.start()
-            self.trade_lock.wait()
+        print(f'bought (coin : {ticker}, price : {buying_price}, amount : {amount}')
+        ret = self.selling_target(ticker, buying_price, amount, target)
 
-    def __selling_target(self, ticker, buying_price, amount, target,):
+    def selling_target(self, ticker, buying_price, amount, target):
         print(f'ready to sell {ticker} for {target}%')
         sell_flag = False
         while sell_flag != True:
@@ -74,7 +72,7 @@ class EventCouple(Event):
                         break
                     time.sleep(1)
 
-        self.trade_lock.notifyAll()
+        return 0 if increase_rate > 0 else -1 # selling for plus return 0, selling for minus return -1
 
     def __monitoring(self):
         print(f'start monitoring : {self.primary_coin.get_ticker()} - {self.chain_coin.get_ticker()}')
@@ -84,14 +82,14 @@ class EventCouple(Event):
         while self.__running:
             primary_current_price = self.primary_coin.get_current_price()
             chain_current_price = self.chain_coin.get_current_price()
-            if (util.get_increase_rate(primary_current_price, primary_base_price)) >= 0.05:
-                print('Primary coin begins to pump up')
-                if util.get_increase_rate(chain_current_price, chain_base_price) < 3:
+            if (util.get_increase_rate(primary_current_price, primary_base_price)) >= 1:
+                print('Primary coin begins to pump up with 1%')
+                if util.get_increase_rate(chain_current_price, chain_base_price) < 1:
                     print('ready to buy chain coin')
                     self.do_trade(self.chain_coin.get_ticker(), self.chain_coin.get_current_price(), self.target_per)
                 else:
                     print('chain coin already has pumped up')
-            time.sleep(self.wait_time)
+            time.sleep(INTERVAL)
             primary_base_price = self.primary_coin.get_current_price()
             chain_base_price = self.chain_coin.get_current_price()
 
