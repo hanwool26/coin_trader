@@ -15,17 +15,23 @@ class Account():
 
     def buy(self, ticker, price, amount):
         if self.get_balance() < 0:
+            ret = -1
             raise Exception('no enough blanace')
         else :
             ret = self.upbit.buy_limit_order(ticker, price, amount)
             print(f'success to buy {amount} of {ticker} at {price}')
+        return ret
 
     def sell(self, ticker, price, amount):
         ret = self.upbit.sell_limit_order(ticker, price, amount)
-        if ret > 0:
-            print(f'success to sell {amount} of {ticker} at {price}')
-        else :
-            print(f'failed to sell {ticker}')
+        return ret
+
+    def cancel_order(self, uuid):
+        ret = self.upbit.cancel_order(uuid)
+        return ret
+
+    def order_status(self, uuid):
+        return self.upbit.get_order(uuid)['state']
 
     def connect_account(self):
         try:

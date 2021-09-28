@@ -4,7 +4,7 @@ from src.event_couple import *
 
 class Event():
     def __init__(self):
-        self.trade_lock = threading.Condition()
+        self.trade_lock = None
         self.account = None
 
     def do_buy(self, ticker, amount):

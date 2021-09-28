@@ -1,4 +1,5 @@
 import pyupbit
+import time
 from src.account import *
 from src.config import *
 from src.event_couple import *
@@ -13,5 +14,7 @@ if __name__ == '__main__':
     my_account.get_balance()
 
     manager = Manager(my_account)
-    manager.do_start([('KRW-XRP', 'KRW-ETH'),], 'couple')
+    manager.do_start([('KRW-XTZ', 'KRW-XRP'),], 'couple')
+    time.sleep(10)
+    manager.do_stop()
 
