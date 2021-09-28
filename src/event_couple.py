@@ -26,7 +26,8 @@ class EventCouple(Event):
         self.__running = False
 
     def do_trade(self, buying_coin, buying_price, target):
-        amount = (self.account.get_balance() // buying_price) * self.coherence # according to coherence of coupling, buying amount can be changed.
+        my_balance = self.account.get_balance()
+        amount = util.get_buying_amount(my_balance, buying_price, self.coherence)
         # -> Exception happens when price of chain is bigger than balance.
         print(f'ready to buy (coin : {buying_coin}, price : {buying_price}, amount : {amount}')
         pass
