@@ -12,7 +12,7 @@ if __name__ == '__main__':
     access_key, secret_key = config.get_api_key()
     my_account = Account(access_key, secret_key)
     my_account.connect_account()
-    my_account.get_balance()
+    my_account.get_asset()
 
     files = LoadFile('couple_coin_list.xlsx')
     couple_list = files.get_couple_list()

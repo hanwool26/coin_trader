@@ -6,7 +6,7 @@ from src.event import *
 from src.coin import *
 
 TIME_OUT = 60
-INTERVAL = 3 * TIME_OUT
+INTERVAL = 5 * TIME_OUT
 
 class EventCouple(Event):
     BUYING_AMOUNT = { # show chain cohesion
