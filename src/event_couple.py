@@ -6,36 +6,37 @@ from src.event import *
 from src.coin import *
 
 TIME_OUT = 60
-INTERVAL = 180
+INTERVAL = 3 * TIME_OUT
 
 class EventCouple(Event):
-    BUYING_AMOUNT = { # show chain coherence
+    BUYING_AMOUNT = { # show chain cohesion
         'welldone' : 1,
         'medium': 0.5,
         'rare': 0.05,
     }
     TARGET_PROFIT = {
-        'welldone': 5,
-        'medium' : 3,
-        'rare' : 1,
+        'welldone': 10,
+        'medium' : 5,
+        'rare' : 3,
     }
-    def __init__(self, account, primary_ticker, chain_ticker, coherence):
+    def __init__(self, idx, account, primary_ticker, chain_ticker, cohesion):
         # super
+        self.ev_id = idx
         self.account = account
         self.trade_lock = threading.Condition()
 
         # mine
         self.primary_coin = Coin(primary_ticker)
         self.chain_coin = Coin(chain_ticker)
-        self.coherence = self.BUYING_AMOUNT['rare']
-        self.target_per = self.TARGET_PROFIT['rare']
+        self.cohesion = self.BUYING_AMOUNT[cohesion]
+        self.target_per = self.TARGET_PROFIT[cohesion]
         # self.wait_time = 5 # secs
 
         self.__running = False
 
     def do_trade(self, ticker, buying_price, target):
-        after_balance = my_balance = self.account.get_balance()
-        amount = util.get_buying_amount(my_balance, buying_price, self.coherence)
+        my_balance = self.account.get_balance()
+        amount = util.get_buying_amount(my_balance, buying_price, self.cohesion)
         # -> Exception happens when price of chain is bigger than balance.
         print(f'ready to buy')
         ret = self.account.buy(ticker, buying_price, amount)
