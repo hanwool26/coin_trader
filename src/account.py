@@ -12,7 +12,6 @@ class Account():
         print(f'asset : {asset} 원')
         return asset
 
-
     def get_balance(self) -> int:
         my_info = self.upbit.get_balances()[0]
         balance = (int(my_info['balance'].split('.')[0]))

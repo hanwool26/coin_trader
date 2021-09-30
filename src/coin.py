@@ -1,15 +1,27 @@
 import pyupbit
 
+KRW = 'KRW'
+BTC = 'BTC'
+
 class Coin:
-    def __init__(self, ticker):
-        print(f'init coin : {ticker}')
-        self.ticker = ticker
-        pass
+    def __init__(self, name):
+        self.name = name
+        self.ticker = self.from_name_to_ticker(name)
+        print(f'init coin : {name}({self.ticker})')
+
+    def from_name_to_ticker(self, name) -> str:
+        market_info = pyupbit.fetch_market()
+        ticker = None
+        for attr in market_info:
+            if name == attr['korean_name']:
+                if KRW in attr['market']:
+                    ticker = attr['market']
+                    break
+
+        if ticker == None:
+            print(f'no found {name} in market list')
+
+        return ticker
 
     def get_current_price(self):
         return pyupbit.get_current_price(self.ticker)
-
-    def get_ticker(self) -> str:
-        return self.ticker
-
-
