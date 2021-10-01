@@ -18,7 +18,7 @@ class LoadFile:
         for row in ws.values:
             couple_list.append(row)
 
-        del couple_list[0] # delete header in couple_list
+        # del couple_list[0] # delete header in couple_list
         for attr in couple_list:
             print(attr)
         return couple_list

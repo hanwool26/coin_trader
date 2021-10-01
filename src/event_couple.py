@@ -12,12 +12,12 @@ class EventCouple(Event):
     BUYING_AMOUNT = { # show chain cohesion
         'welldone' : 1,
         'medium': 0.5,
-        'rare': 0.05,
+        'rare': 0.2,
     }
     TARGET_PROFIT = {
         'welldone': 10,
         'medium' : 5,
-        'rare' : 0.5,
+        'rare' : 3,
     }
     def __init__(self, idx, account, primary_ticker, chain_ticker, cohesion):
         # super
@@ -96,6 +96,8 @@ class EventCouple(Event):
                 chain_base_price = self.chain_coin.get_current_price()
             except Exception as e:
                 print(e)
+
+        print(f'stop monitoring : {self.primary_coin.name} - {self.chain_coin.name}')
 
     def close_thread(self):
         self.__running = False

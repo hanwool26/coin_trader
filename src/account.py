@@ -7,8 +7,7 @@ class Account():
         self.upbit = None
 
     def get_asset(self) -> int:
-        my_info = self.upbit.get_balances()[0]
-        asset = (my_info['balance'] + my_info['locked']).split('.')[0]
+        asset = self.get_balance() + self.get_locked()
         print(f'asset : {asset} 원')
         return asset
 
