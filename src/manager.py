@@ -1,5 +1,6 @@
 from src.event_couple import *
-
+import logging
+from src import log
 class Manager:
     def __init__(self, account, couple_list):
         self.account = account
@@ -20,4 +21,4 @@ class Manager:
     def do_stop(self, selected_id: list, trade):
         if trade == 'couple':
             for idx in selected_id:
-                self.couple_event[idx].__running = False
+                self.couple_event[idx].close_thread()

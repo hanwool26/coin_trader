@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from src.util import UI_PATH
+from src import log
 import os
 import sys
+import logging
 
 # for test couple_list = [('선두코인', '후발코인'), ('이더', '비트'), ('리플', '슨트'), ('리플', '스텔라')]
 
@@ -26,6 +28,20 @@ class MainWindow(QMainWindow):
 
         self.asset_info = self.findChild(QLineEdit, 'asset_info')
 
+        # group box
+        self.couple_r_btn = self.findChild(QRadioButton, 'couple_r_btn')
+        self.couple_r_btn.clicked.connect(self.radio_btn_event)
+        self.infinite_r_btn = self.findChild(QRadioButton, 'infinite_r_btn')
+        self.infinite_r_btn.clicked.connect(self.radio_btn_event)
+
+        self.log_view = self.findChild(QTextBrowser, 'log_view')
+        self.log_handler = log.QTextEditLogger(self.log_view)
+        self.log_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
+        logging.getLogger('LOG').addHandler(self.log_handler)
+        logging.getLogger('LOG').setLevel(logging.DEBUG)
+
+
+
     def set_table_data(self, couple_list):
         header = couple_list[0]
         self.list_view.setColumnCount(len(header))
@@ -44,12 +60,16 @@ class MainWindow(QMainWindow):
         self.sel_id = [idx.row() for idx in selected]
 
     def trade_btn_event(self):
-        print('trade start')
         self.manager_handler.do_start(self.sel_id, self.trade)
 
     def stop_btn_event(self):
-        print('stop trade')
         self.manager_handler.do_stop(self.sel_id, self.trade)
+
+    def radio_btn_event(self):
+        if self.couple_r_btn.isChecked():
+            self.trade = 'couple'
+        elif self.infinite_r_btn.isChecked():
+            self.trade = 'infinite'
 
     def set_manager_handler(self, manager):
         self.manager_handler = manager

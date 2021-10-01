@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 import os
+import logging
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 
@@ -7,9 +8,9 @@ class LoadFile:
     def __init__(self, file):
         try:
             self.load_wb = load_workbook(os.path.join(DATA_PATH, file), data_only=True)
-            print(f'loading {file}')
+            logging.getLogger('LOG').info(f'loading {file}')
         except Exception as e:
-            print(f'failed to load {file} : {e}')
+            logging.getLogger('LOG').error(f'failed to load {file} : {e}')
 
     def get_couple_list(self):
         couple_list = list()

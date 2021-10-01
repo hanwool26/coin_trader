@@ -1,4 +1,5 @@
 import pyupbit
+import logging
 
 KRW = 'KRW'
 BTC = 'BTC'
@@ -7,7 +8,7 @@ class Coin:
     def __init__(self, name):
         self.name = name
         self.ticker = self.from_name_to_ticker(name)
-        print(f'init coin : {name}({self.ticker})')
+        logging.getLogger('LOG').info(f'init coin : {name}({self.ticker})')
 
     def from_name_to_ticker(self, name) -> str:
         market_info = pyupbit.fetch_market()
@@ -19,7 +20,7 @@ class Coin:
                     break
 
         if ticker == None:
-            print(f'no found {name} in market list')
+            logging.getLogger('LOG').warn(f'no found {name} in market list')
 
         return ticker
 
