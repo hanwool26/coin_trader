@@ -17,8 +17,12 @@ class Manager:
         if trade == 'couple':
             for idx in selected_id:
                 self.couple_event[idx].start()
+        elif trade == 'infinite':
+            pass
 
     def do_stop(self, selected_id: list, trade):
         if trade == 'couple':
             for idx in selected_id:
                 self.couple_event[idx].close_thread()
+        elif trade == 'infinite':
+            pass

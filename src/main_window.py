@@ -6,6 +6,7 @@ import os
 import sys
 import logging
 
+HEADER_SUFFIX = ('진행상태', )
 # for test couple_list = [('선두코인', '후발코인'), ('이더', '비트'), ('리플', '슨트'), ('리플', '스텔라')]
 
 class MainWindow(QMainWindow):
@@ -40,10 +41,8 @@ class MainWindow(QMainWindow):
         logging.getLogger('LOG').addHandler(self.log_handler)
         logging.getLogger('LOG').setLevel(logging.DEBUG)
 
-
-
     def set_table_data(self, couple_list):
-        header = couple_list[0]
+        header = couple_list[0] + HEADER_SUFFIX
         self.list_view.setColumnCount(len(header))
         self.list_view.setHorizontalHeaderLabels(header)
         del couple_list[0]
@@ -52,8 +51,12 @@ class MainWindow(QMainWindow):
 
         for rownum, row in enumerate(couple_list):
             for col, val in enumerate(row):
-                item = QTableWidgetItem(val)
-                self.list_view.setItem(rownum,col, item)
+                self.item_update(rownum, col, val)
+
+    def item_update(self, row, col, val):
+        item = QTableWidgetItem(val)
+        if item != None:
+            self.list_view.setItem(row,col,item)
 
     def cellclicked_event(self, row,col):
         selected = self.list_view.selectedIndexes()
