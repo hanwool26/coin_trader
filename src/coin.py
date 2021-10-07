@@ -22,6 +22,8 @@ class Coin:
         if ticker == None:
             logging.getLogger('LOG').warn(f'no found {name} in market list')
 
+
+
         return ticker
 
     def get_current_price(self):

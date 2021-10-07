@@ -19,7 +19,7 @@ class EventCouple(Event):
         'medium' : 5,
         'rare' : 1,
     }
-    def __init__(self, idx, account, main_window, primary_ticker, chain_ticker, cohesion):
+    def __init__(self, idx, account, main_window, primary_c_name, chain_c_name, cohesion):
         # super
         self.ev_id = idx
         self.account = account
@@ -27,8 +27,8 @@ class EventCouple(Event):
         self.ui_control = main_window
 
         # mine
-        self.primary_coin = Coin(primary_ticker)
-        self.chain_coin = Coin(chain_ticker)
+        self.primary_coin = Coin(primary_c_name)
+        self.chain_coin = Coin(chain_c_name)
         self.cohesion = self.BUYING_AMOUNT[cohesion]
         self.target_per = self.TARGET_PROFIT[cohesion]
         # self.wait_time = 5 # secs
