@@ -1,8 +1,7 @@
 from openpyxl import load_workbook
 import os
 import logging
-
-DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
+from src.util import DATA_PATH
 
 class LoadFile:
     def __init__(self, file):

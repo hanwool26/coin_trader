@@ -17,7 +17,7 @@ class EventCouple(Event):
     TARGET_PROFIT = {
         'welldone': 10,
         'medium' : 5,
-        'rare' : 3,
+        'rare' : 1,
     }
     def __init__(self, idx, account, main_window, primary_ticker, chain_ticker, cohesion):
         # super
@@ -67,7 +67,7 @@ class EventCouple(Event):
         logging.getLogger('LOG').info(f'ready to sell {ticker} for {target}%')
         self.update_status('ready to sell')
         sell_flag = False
-        while sell_flag != True:
+        while sell_flag != True and self.__running:
             current_price = self.chain_coin.get_current_price()
             increase_rate =  util.get_increase_rate(current_price, buying_price)
             if increase_rate > target or increase_rate < -target:
@@ -95,9 +95,9 @@ class EventCouple(Event):
             try:
                 primary_current_price = self.primary_coin.get_current_price()
                 chain_current_price = self.chain_coin.get_current_price()
-                if (util.get_increase_rate(primary_current_price, primary_base_price)) >= 0.01:
+                if (util.get_increase_rate(primary_current_price, primary_base_price)) >= self.target_per:
                     logging.getLogger('LOG').info('Primary coin begins to pump up with 1%')
-                    if util.get_increase_rate(chain_current_price, chain_base_price) < 1:
+                    if util.get_increase_rate(chain_current_price, chain_base_price) < self.target_per:
                         logging.getLogger('LOG').info('ready to buy chain coin')
                         self.do_trade(self.chain_coin.ticker, self.chain_coin.get_current_price(), self.target_per)
                     else:

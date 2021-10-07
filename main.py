@@ -1,14 +1,12 @@
-import pyupbit
-import time
 from src.account import *
 from src.config import *
-from src.event_couple import *
 from src.manager import *
 from src.load_file import *
-from src.main_window import *
+from main_window import *
 import sys
-import os
 from PyQt5.QtWidgets import *
+
+# COUPLE_FILE_PATH =
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

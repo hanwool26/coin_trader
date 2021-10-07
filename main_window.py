@@ -12,7 +12,12 @@ HEADER_SUFFIX = ('진행상태', )
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        uic.loadUi(os.path.join(UI_PATH, 'main.ui'), self)
+
+        if getattr(sys, 'frozen', False):
+            res_path = os.path.realpath(sys.executable)
+        elif __file__:
+            res_path = os.path.realpath(__file__)
+        uic.loadUi(res_path[:res_path.rfind('\\')] + '\\\\ui\\main.ui', self)
 
         self.manager_handler = None
         self.sel_id = list()
@@ -42,6 +47,7 @@ class MainWindow(QMainWindow):
         logging.getLogger('LOG').setLevel(logging.DEBUG)
 
     def set_table_data(self, couple_list):
+        print('set table data')
         header = couple_list[0] + HEADER_SUFFIX
         self.list_view.setColumnCount(len(header))
         self.list_view.setHorizontalHeaderLabels(header)
