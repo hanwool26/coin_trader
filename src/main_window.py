@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         if item != None:
             self.list_view.setItem(row,col,item)
 
-    def cellclicked_event(self, row,col):
+    def cellclicked_event(self, row, col):
         selected = self.list_view.selectedIndexes()
         self.sel_id = [idx.row() for idx in selected]
 

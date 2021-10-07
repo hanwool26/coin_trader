@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # load coin list from file and set the list on listView
     mywindow.set_table_data(couple_list)
-    manager = Manager(my_account, couple_list)
+    manager = Manager(my_account, mywindow, couple_list)
     mywindow.set_manager_handler(manager)
 
     mywindow.show()
