@@ -1,5 +1,6 @@
 import threading
 import pyupbit
+from src.util import *
 from src.event_couple import *
 
 STATUS_HEADER = 5 # columm number
@@ -15,11 +16,12 @@ class Event():
 
     def do_buy(self, ticker, amount):
         current_price = pyupbit.get_current_price(ticker)
-        self.account.buy(ticker, current_price, amount)
-        pass
+        ret = self.account.buy(ticker, current_price, amount) # 현재가 윗호가 매수
+        return ret
 
     def do_sell(self, ticker, price, amount):
-        self.account.sell(ticker, price, amount)
+        ret = self.account.sell(ticker, price, amount)
+        return ret
 
     def get_status(self):
         return self.status
