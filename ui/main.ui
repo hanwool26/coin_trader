@@ -16,11 +16,14 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QGridLayout" name="gridLayout" rowstretch="0,2,0,1" columnstretch="1,1,1">
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="couple_r_btn">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,2,0,1" columnstretch="1,1,1">
+      <item row="0" column="2">
+       <widget class="QComboBox" name="coin_comboBox"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="trade_btn">
         <property name="text">
-         <string>커플링 매매</string>
+         <string>매매시작</string>
         </property>
        </widget>
       </item>
@@ -31,28 +34,38 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="trade_btn">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="couple_r_btn">
         <property name="text">
-         <string>매매시작</string>
+         <string>커플링 매매</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="3">
+      <item row="2" column="0" colspan="3">
        <widget class="QTableWidget" name="list_view"/>
       </item>
-      <item row="3" column="0" colspan="3">
-       <widget class="QTextBrowser" name="log_view"/>
-      </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QPushButton" name="stop_btn">
         <property name="text">
          <string>매매정지</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLineEdit" name="asset_info"/>
+      </item>
+      <item row="4" column="0" colspan="3">
+       <widget class="QTextBrowser" name="log_view"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="profit_lineEdit"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

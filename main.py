@@ -5,12 +5,14 @@ from src.load_file import *
 from main_window import *
 import sys
 from PyQt5.QtWidgets import *
+from src.util import *
 
 # COUPLE_FILE_PATH =
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mywindow = MainWindow()
+    mywindow.setWindowTitle('DreamCoin')
 
     config = Config()
     config.load_config()
@@ -24,6 +26,7 @@ if __name__ == '__main__':
 
     # load coin list from file and set the list on listView
     mywindow.set_table_data(couple_list)
+    mywindow.set_coin_combobox(get_coin_list())
     manager = Manager(my_account, mywindow, couple_list)
     mywindow.set_manager_handler(manager)
 

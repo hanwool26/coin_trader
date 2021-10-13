@@ -1,4 +1,5 @@
 from src.event_couple import *
+from src.event_infinite import *
 import logging
 from src import log
 class Manager:
@@ -6,6 +7,7 @@ class Manager:
         self.account = account
         self.main_window = main_window
         self.couple_event = list()
+        self.infinite_event = None
         if couple_list is not None:
             self.init_eventcouple(couple_list)
 
@@ -19,11 +21,13 @@ class Manager:
             for idx in selected_id:
                 self.couple_event[idx].start()
         elif trade == 'infinite':
-            pass
+            self.infinite_event = EventInfinite(0, self.account, self.main_window.coin_combobox.currentText())
+            self.infinite_event.start()
 
     def do_stop(self, selected_id: list, trade):
         if trade == 'couple':
             for idx in selected_id:
                 self.couple_event[idx].close_thread()
         elif trade == 'infinite':
+            self.infinite_event.close()
             pass

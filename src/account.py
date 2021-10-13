@@ -39,6 +39,7 @@ class Account():
 
     def cancel_order(self, uuid):
         ret = self.upbit.cancel_order(uuid)
+        print(ret)
         return ret
 
     def order_status(self, uuid):

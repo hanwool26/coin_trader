@@ -20,6 +20,7 @@ class Event():
         return ret
 
     def do_sell(self, ticker, price, amount):
+        print(f'do sell : {ticker}, {price}, {amount}')
         ret = self.account.sell(ticker, price, amount)
         return ret
 

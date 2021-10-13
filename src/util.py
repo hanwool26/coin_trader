@@ -1,4 +1,5 @@
 import os
+import pyupbit
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
@@ -32,3 +33,21 @@ def get_tick_unit(price):
     else:
         return 1000
 
+def get_above_tick_price(price):
+    return price + get_tick_unit(price)
+
+def get_below_tick_price(price):
+    return price - get_tick_unit(price)
+
+def get_avg_price(avg_price, price, count):
+    avg_price = ((avg_price * (count-1) + price)) / count
+    return round(avg_price, 2)
+
+def get_coin_list():
+    coin_list = list()
+    market_info = pyupbit.fetch_market()
+    for attr in market_info:
+        if 'KRW' in attr['market']:
+            coin_list.append(attr['korean_name'])
+
+    return coin_list

@@ -40,6 +40,10 @@ class MainWindow(QMainWindow):
         self.infinite_r_btn = self.findChild(QRadioButton, 'infinite_r_btn')
         self.infinite_r_btn.clicked.connect(self.radio_btn_event)
 
+        # coin list combo box
+        self.coin_combobox = self.findChild(QComboBox, 'coin_comboBox')
+
+
         self.log_view = self.findChild(QTextBrowser, 'log_view')
         self.log_handler = log.QTextEditLogger(self.log_view)
         self.log_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
@@ -58,6 +62,12 @@ class MainWindow(QMainWindow):
         for rownum, row in enumerate(couple_list):
             for col, val in enumerate(row):
                 self.item_update(rownum, col, val)
+
+    def set_coin_combobox(self, coin_list):
+        if coin_list == None:
+            return
+        for coin in coin_list:
+            self.coin_combobox.addItem(coin)
 
     def item_update(self, row, col, val):
         item = QTableWidgetItem(val)
