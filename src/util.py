@@ -51,3 +51,9 @@ def get_coin_list():
             coin_list.append(attr['korean_name'])
 
     return coin_list
+
+def price_round(price):
+    tick = get_tick_unit(price)
+    price = (price // tick) * tick
+    return price
+

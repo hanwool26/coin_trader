@@ -21,7 +21,7 @@ class Manager:
             for idx in selected_id:
                 self.couple_event[idx].start()
         elif trade == 'infinite':
-            self.infinite_event = EventInfinite(0, self.account, self.main_window.coin_combobox.currentText())
+            self.infinite_event = EventInfinite(0, self.account, self.main_window)
             self.infinite_event.start()
 
     def do_stop(self, selected_id: list, trade):

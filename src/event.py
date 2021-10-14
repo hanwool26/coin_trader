@@ -27,9 +27,23 @@ class Event():
     def get_status(self):
         return self.status
 
+    def update_profit(self, profit_rate):
+        if self.ui_control == None:
+            print('ui control is none')
+        else:
+            self.ui_control.update_profit(profit_rate)
+
     def update_status(self, status):
         self.status = status
         if self.ui_control == None:
             print('ui control is none')
-        self.ui_control.item_update(self.ev_id, STATUS_HEADER, status)
+        else:
+            self.ui_control.item_update(self.ev_id, STATUS_HEADER, status)
+
+    def update_progress(self, max, count):
+        if self.ui_control == None:
+            print('ui control is none')
+        else:
+            self.ui_control.update_progress(max, count)
+
 

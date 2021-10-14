@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self.stop_btn.clicked.connect(self.stop_btn_event)
 
         self.asset_info = self.findChild(QLineEdit, 'asset_info')
+        self.profit_info = self.findChild(QLineEdit, 'profit_lineEdit')
 
         # group box
         self.couple_r_btn = self.findChild(QRadioButton, 'couple_r_btn')
@@ -43,12 +44,22 @@ class MainWindow(QMainWindow):
         # coin list combo box
         self.coin_combobox = self.findChild(QComboBox, 'coin_comboBox')
 
+        self.progressbar = self.findChild(QProgressBar, 'progressBar')
+        self.progressbar.setValue(0)
 
         self.log_view = self.findChild(QTextBrowser, 'log_view')
         self.log_handler = log.QTextEditLogger(self.log_view)
         self.log_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
         logging.getLogger('LOG').addHandler(self.log_handler)
         logging.getLogger('LOG').setLevel(logging.DEBUG)
+
+    def update_profit(self, profit_rate):
+        profit_info = f'수익률 : {profit_rate} %'
+        self.profit_info.setText(profit_info)
+
+    def update_progress(self, max, count):
+        var = 100 / max
+        self.progressbar.setValue(var * count)
 
     def set_table_data(self, couple_list):
         print('set table data')
