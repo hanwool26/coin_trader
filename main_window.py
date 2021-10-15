@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
     def set_interval_combobox(self):
         interval = [1,3,6,9,12,24]
         for time in interval:
-            self.interval_combobox.addItem(str(time))
+            self.interval_combobox.addItem(f'{time} 시간')
         self.interval_combobox.setCurrentText('Interval')
 
     def item_update(self, row, col, val):

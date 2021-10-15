@@ -32,7 +32,7 @@ class EventInfinite(Event):
     def get_interval(self):
         try:
             hour = self.ui_control.interval_combobox.currentText()
-            return INTERVAL * int(hour)
+            return INTERVAL * int(util_strip(hour))
         except Exception as e:
             logging.getLogger('LOG').error(f'Interval을 선택해주세요.')
 
