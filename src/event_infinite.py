@@ -4,7 +4,7 @@ from src.util import *
 import logging
 import threading
 
-INTERVAL = 1 * TIME_OUT # minutes
+INTERVAL = 60 * TIME_OUT # minutes
 PER_BUY = 40 # divided by 40
 
 class EventInfinite(Event):
@@ -18,15 +18,27 @@ class EventInfinite(Event):
         self.__running = False
         self.RATIO_BUY = 1/PER_BUY
 
+        self.interval = self.get_interval()
+        self.balance = self.ui_control.invest_asset
         self.buy_count = 0
         self.avg_price = 0
         self.total_amount = 0
-        pass
+
+        self.threads = [
+            threading.Thread(target=self.__trading),
+            threading.Thread(target=self.__show_info),
+        ]
+
+    def get_interval(self):
+        try:
+            hour = self.ui_control.interval_combobox.currentText()
+            return INTERVAL * int(hour)
+        except Exception as e:
+            logging.getLogger('LOG').error(f'Interval을 선택해주세요.')
 
     def do_buy(self, price, amount):
         try:
             ret = self.account.buy(self.coin.ticker, price, amount)
-            print(ret)
             uuid = ret['uuid']
 
             for sec in range(TIME_OUT+1):
@@ -41,31 +53,35 @@ class EventInfinite(Event):
             logging.getLogger('LOG').info('매수 실패 : 체결 타임 아웃')
             return False
         except Exception as e:
-            logging.getLogger('LOG').error(e)
+            logging.getLogger('LOG').error(ret['error']['message'])
             self.buy_count += 1
             return False
 
-    def __trading(self):
-        balance = self.account.get_balance()
-        if balance <= 0:
+    def init_trade(self):
+        if self.balance <= 0:
             logging.getLogger('LOG').info('잔고 부족')
             return
-        each_asset = round(balance * self.RATIO_BUY, 2)
+        each_asset = round(self.balance * self.RATIO_BUY, 2)
 
         cur_price = self.coin.get_current_price()
-        self.avg_price = cur_price = get_above_tick_price(cur_price) # 호가 위 매수
+        self.avg_price = cur_price = get_above_tick_price(cur_price)  # 호가 위 매수
         buying_amount = get_buying_amount(each_asset, cur_price, 1)
-        if self.do_buy(cur_price, buying_amount)!= True:
+        if self.do_buy(cur_price, buying_amount) != True:
             self.close()
-            return
+            return None
 
-        time.sleep(INTERVAL)
+        self.ui_control.update_progress(PER_BUY, self.buy_count)
+        self.ui_contorl.show_asset_info()
+        return each_asset
+
+    def __trading(self):
+        buying_asset = self.init_trade()
+        if buying_asset == None:
+            return
 
         while self.__running and self.buy_count < PER_BUY:
             # order sell
-            self.ui_control.update_progress(PER_BUY, self.buy_count)
-            self.update_profit(get_increase_rate(cur_price, self.avg_price))
-            ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.1), self.total_amount)
+            ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.1), self.total_amount) # 10% 매도
             uuid = ret['uuid']
             time.sleep(INTERVAL)
             if self.account.order_status(uuid) == 'done':
@@ -78,25 +94,35 @@ class EventInfinite(Event):
                 cur_price = self.coin.get_current_price()
                 above_tick_price = get_above_tick_price(cur_price)
                 if cur_price <= self.avg_price:
-                    buying_amount = get_buying_amount(each_asset, above_tick_price, 1)
+                    buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                     self.do_buy(above_tick_price, buying_amount)
                 if cur_price <= self.avg_price * 1.05:
-                    buying_amount = get_buying_amount(each_asset, above_tick_price, 1)
+                    buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                     self.do_buy(above_tick_price, buying_amount)
 
+            self.ui_control.update_progress(PER_BUY, self.buy_count)
+            self.ui_control.show_asset_info()
             time.sleep(1)
 
-        ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절. 
+        ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.03), self.total_amount) # 3% 수익 익절.
         self.close()
+
+    def __show_info(self):
+        while self.__running:
+            cur_price = self.coin.get_current_price()
+            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price))
+            time.sleep(0.5)
 
     def close(self):
         logging.getLogger('LOG').info('무한 매수 종료')
         self.__running = False
         self.avg_price = self.buy_count = self.total_amount = 0
-        self.ui_control.update_progress(PER_BUY, 0)
+        self.ui_control.update_progress(PER_BUY, self.buy_count)
 
     def start(self):
-        logging.getLogger('LOG').info(f'무한 매수 시작 : {self.coin.name}')
+        if self.interval == None:
+            return
+        logging.getLogger('LOG').info(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval//INTERVAL} 시간, 투자금액 : {self.balance} 원')
         self.__running = True
-        t = threading.Thread(target=self.__trading)
-        t.start()
+        for t in self.threads:
+            t.start()

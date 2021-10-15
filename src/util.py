@@ -5,11 +5,15 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
 
 def get_increase_rate(current_price, base_price):
+    if base_price == 0:
+        return 0
     increase_rate = round(((current_price - base_price)/base_price)*100, 2)
     print(increase_rate)
     return increase_rate
 
 def get_buying_amount(balance, price, coherence):
+    if price == 0:
+        return 0
     amount = (balance / price) * coherence
     return round(amount,2)
 
@@ -56,4 +60,10 @@ def price_round(price):
     tick = get_tick_unit(price)
     price = (price // tick) * tick
     return price
+
+def util_strip(string):
+    string = string.split()
+    return int(string[0])
+
+
 

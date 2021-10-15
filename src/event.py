@@ -27,11 +27,12 @@ class Event():
     def get_status(self):
         return self.status
 
-    def update_profit(self, profit_rate):
+    def update_info(self, price, avg_price, amount, profit_rate):
+        info = f'현재가: {price} | 평단가: {avg_price} | 평가손익 : {round((avg_price*amount) * profit_rate, 2)} | 수익률 : {profit_rate} %'
         if self.ui_control == None:
             print('ui control is none')
         else:
-            self.ui_control.update_profit(profit_rate)
+            self.ui_control.update_info(info)
 
     def update_status(self, status):
         self.status = status
