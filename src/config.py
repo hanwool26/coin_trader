@@ -7,7 +7,7 @@ class Config:
         self.config = configparser.ConfigParser()
         self.secret_key = ""
         self.access_key = ""
-        self.CONFIG_PATH = os.path.join(DATA_PATH, 'config.ini')
+        self.CONFIG_PATH = os.path.join(DATA_PATH, '../data/config.ini')
 
 
     def load_config(self):

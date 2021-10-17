@@ -70,8 +70,8 @@ class EventInfinite(Event):
             self.close()
             return None
 
-        self.ui_control.update_progress(PER_BUY, self.buy_count)
-        self.ui_contorl.show_asset_info()
+        self.update_progress(PER_BUY, self.buy_count)
+        self.ui_control.show_asset_info()
         return each_asset
 
     def __trading(self):
@@ -83,7 +83,7 @@ class EventInfinite(Event):
             # order sell
             ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.1), self.total_amount) # 10% 매도
             uuid = ret['uuid']
-            time.sleep(INTERVAL)
+            time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
                 logging.getLogger('LOG').info('매도 성공')
                 self.close()
@@ -100,7 +100,7 @@ class EventInfinite(Event):
                     buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                     self.do_buy(above_tick_price, buying_amount)
 
-            self.ui_control.update_progress(PER_BUY, self.buy_count)
+            self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
             time.sleep(1)
 

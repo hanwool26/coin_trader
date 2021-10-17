@@ -3,15 +3,16 @@ import logging
 
 KRW = 'KRW'
 BTC = 'BTC'
+market_info = pyupbit.fetch_market()
 
 class Coin:
     def __init__(self, name):
         self.name = name
         self.ticker = self.from_name_to_ticker(name)
+
         logging.getLogger('LOG').info(f'init coin : {name}({self.ticker})')
 
     def from_name_to_ticker(self, name) -> str:
-        market_info = pyupbit.fetch_market()
         ticker = None
         for attr in market_info:
             if name == attr['korean_name']:

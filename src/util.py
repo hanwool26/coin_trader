@@ -8,7 +8,6 @@ def get_increase_rate(current_price, base_price):
     if base_price == 0:
         return 0
     increase_rate = round(((current_price - base_price)/base_price)*100, 2)
-    print(increase_rate)
     return increase_rate
 
 def get_buying_amount(balance, price, coherence):
@@ -53,6 +52,7 @@ def get_coin_list():
     for attr in market_info:
         if 'KRW' in attr['market']:
             coin_list.append(attr['korean_name'])
+    coin_list.sort()
 
     return coin_list
 

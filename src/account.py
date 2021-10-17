@@ -30,8 +30,7 @@ class Account():
             raise Exception('no enough blanace')
         else :
             ret = self.upbit.buy_limit_order(ticker, price, amount)
-            if ret['error'] == None:
-                logging.getLogger('LOG').info(f'success to buy {amount} of {ticker} at {price}')
+            logging.getLogger('LOG').info(f'success to buy {amount} of {ticker} at {price}')
         return ret
 
     def sell(self, ticker, price, amount):
