@@ -20,8 +20,11 @@ class Event():
         return ret
 
     def do_sell(self, ticker, price, amount):
-        print(f'do sell : {ticker}, {price}, {amount}')
-        ret = self.account.sell(ticker, price, amount)
+        try:
+            ret = self.account.sell(ticker, price, amount)
+            print(f'do sell : {ticker}, {price}, {amount}')
+        except Exception as e:
+            print(e)
         return ret
 
     def get_status(self):

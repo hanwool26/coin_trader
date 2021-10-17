@@ -70,7 +70,7 @@ class EventInfinite(Event):
             self.close()
             return None
 
-        self.update_progress(PER_BUY, self.buy_count)
+        # self.update_progress(PER_BUY, self.buy_count)
         self.ui_control.show_asset_info()
         return each_asset
 
@@ -81,7 +81,11 @@ class EventInfinite(Event):
 
         while self.__running and self.buy_count < PER_BUY:
             # order sell
-            ret = self.do_sell(self.coin.ticker, price_round(self.avg_price * 1.1), self.total_amount) # 10% 매도
+            if self.buy_count > PER_BUY // 2:
+                selling_price = price_round(self.avg_price * 1.05) # 평단가 5% 매도
+            else:
+                selling_price = price_round(self.avg_price * 1.1) # 평단가 10% 매도
+            ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount) # 매도
             uuid = ret['uuid']
             time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
@@ -100,7 +104,7 @@ class EventInfinite(Event):
                     buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                     self.do_buy(above_tick_price, buying_amount)
 
-            self.update_progress(PER_BUY, self.buy_count)
+            # self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
             time.sleep(1)
 
@@ -117,7 +121,7 @@ class EventInfinite(Event):
         logging.getLogger('LOG').info('무한 매수 종료')
         self.__running = False
         self.avg_price = self.buy_count = self.total_amount = 0
-        self.ui_control.update_progress(PER_BUY, self.buy_count)
+        # self.update_progress(PER_BUY, self.buy_count)
 
     def start(self):
         if self.interval == None:
