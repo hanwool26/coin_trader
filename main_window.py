@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from src.util import UI_PATH, util_strip
 from src import log
@@ -18,6 +19,9 @@ class MainWindow(QMainWindow):
         elif __file__:
             res_path = os.path.realpath(__file__)
         uic.loadUi(res_path[:res_path.rfind('\\')] + '\\\\ui\\main.ui', self)
+
+        icon_path = os.path.join(UI_PATH, 'Bitcoin_Cash.png')
+        self.setWindowIcon(QIcon(icon_path))
 
         self.manager_handler = None
         self.sel_id = list()
