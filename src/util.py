@@ -5,7 +5,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
 
 def get_increase_rate(current_price, base_price):
-    if base_price == 0:
+    if base_price == 0 or base_price == None or current_price == None:
         return 0
     increase_rate = round(((current_price - base_price)/base_price)*100, 2)
     return increase_rate

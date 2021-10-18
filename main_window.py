@@ -54,6 +54,9 @@ class MainWindow(QMainWindow):
         self.progressbar.setValue(0)
         self.progressbar.setFormat('무한 매수 진행률')
 
+        self.update_asset_menu = self.findChild(QAction, 'update_asset_menu')
+        self.update_asset_menu.triggered.connect(self.show_asset_info)
+
         self.log_view = self.findChild(QTextBrowser, 'log_view')
         self.log_handler = log.QTextEditLogger(self.log_view)
         self.log_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
