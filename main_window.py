@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
 
         self.progressbar = self.findChild(QProgressBar, 'progressBar')
         self.progressbar.setValue(0)
+        self.progressbar.setFormat('무한 매수 진행률')
 
         self.log_view = self.findChild(QTextBrowser, 'log_view')
         self.log_handler = log.QTextEditLogger(self.log_view)
@@ -63,8 +64,9 @@ class MainWindow(QMainWindow):
         self.profit_info.setText(info)
 
     def update_progress(self, max, count):
-        var = int((100 / max) * count)
-        self.progressbar.setValue(var)
+        self.progressbar.setRange(0, max)
+        self.progressbar.setValue(count)
+        self.progressbar.setFormat('진행률 : %v/%m')
 
     def set_table_data(self, couple_list):
         header = couple_list[0] + HEADER_SUFFIX

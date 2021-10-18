@@ -70,7 +70,7 @@ class EventInfinite(Event):
             self.close()
             return None
 
-        # self.update_progress(PER_BUY, self.buy_count)
+        self.update_progress(PER_BUY, self.buy_count)
         self.ui_control.show_asset_info()
         return each_asset
 
@@ -104,7 +104,7 @@ class EventInfinite(Event):
                     buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
                     self.do_buy(above_tick_price, buying_amount)
 
-            # self.update_progress(PER_BUY, self.buy_count)
+            self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
             time.sleep(1)
 
@@ -121,7 +121,7 @@ class EventInfinite(Event):
         logging.getLogger('LOG').info('무한 매수 종료')
         self.__running = False
         self.avg_price = self.buy_count = self.total_amount = 0
-        # self.update_progress(PER_BUY, self.buy_count)
+        self.update_progress(PER_BUY, self.buy_count)
 
     def start(self):
         if self.interval == None:
