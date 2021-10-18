@@ -74,19 +74,34 @@ class EventInfinite(Event):
         self.ui_control.show_asset_info()
         return each_asset
 
+    def order_sell(self):
+        # order sell
+        if self.buy_count > PER_BUY // 2:
+            selling_price = price_round(self.avg_price * 1.05)  # 평단가 5% 매도
+        else:
+            selling_price = price_round(self.avg_price * 1.1)  # 평단가 10% 매도
+        ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount)  # 매도
+        return ret['uuid']
+
+    def order_buy(self, buying_asset):
+        # order buy
+        cur_price = self.coin.get_current_price()
+        above_tick_price = get_above_tick_price(cur_price)
+        if cur_price <= self.avg_price:
+            buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
+            self.do_buy(above_tick_price, buying_amount)
+        if cur_price <= self.avg_price * 1.05:
+            buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
+            self.do_buy(above_tick_price, buying_amount)
+
     def __trading(self):
         buying_asset = self.init_trade()
         if buying_asset == None:
             return
 
         while self.__running and self.buy_count < PER_BUY:
-            # order sell
-            if self.buy_count > PER_BUY // 2:
-                selling_price = price_round(self.avg_price * 1.05) # 평단가 5% 매도
-            else:
-                selling_price = price_round(self.avg_price * 1.1) # 평단가 10% 매도
-            ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount) # 매도
-            uuid = ret['uuid']
+            uuid = self.order_sell()
+            # sleep for interval ( hour units )
             time.sleep(self.interval)
             if self.account.order_status(uuid) == 'done':
                 logging.getLogger('LOG').info('매도 성공')
@@ -94,15 +109,7 @@ class EventInfinite(Event):
                 self.start()
             else:
                 self.account.cancel_order(uuid)
-            # order buy
-                cur_price = self.coin.get_current_price()
-                above_tick_price = get_above_tick_price(cur_price)
-                if cur_price <= self.avg_price:
-                    buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
-                    self.do_buy(above_tick_price, buying_amount)
-                if cur_price <= self.avg_price * 1.05:
-                    buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
-                    self.do_buy(above_tick_price, buying_amount)
+                self.order_buy(buying_asset)
 
             self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
