@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
 
         icon_path = os.path.join(UI_PATH, 'Bitcoin_Cash.png')
         self.setWindowIcon(QIcon(icon_path))
+        self.setGeometry(300,300,300,300)
 
         self.manager_handler = None
         self.sel_id = list()
@@ -50,9 +51,10 @@ class MainWindow(QMainWindow):
 
         # coin list combo box
         self.coin_combobox = self.findChild(QComboBox, 'coin_comboBox')
+        # self.coin_combobox.currentIndexChanged.connect(self.handle_coin_combobox)
         self.interval_combobox = self.findChild(QComboBox, 'interval_comboBox')
         self.asset_rate_combobox = self.findChild(QComboBox, 'asset_rate_comboBox')
-        self.asset_rate_combobox.currentIndexChanged.connect(self.handler_asset_rate_combobox)
+        self.asset_rate_combobox.currentIndexChanged.connect(self.handle_asset_rate_combobox)
 
         self.progressbar = self.findChild(QProgressBar, 'progressBar')
         self.progressbar.setValue(0)
@@ -93,7 +95,10 @@ class MainWindow(QMainWindow):
             self.asset_rate_combobox.addItem(f'{str(rate)} %')
         self.asset_rate_combobox.setCurrentText('자산 비율')
 
-    def handler_asset_rate_combobox(self):
+    def handle_coin_combobox(self):
+        pass
+
+    def handle_asset_rate_combobox(self):
         self.invest_asset = self.manager_handler.account.get_balance() * (util_strip(self.asset_rate_combobox.currentText()) / 100)
         self.invest_asset_lineedit.setText(f'투자금액 : {(round(self.invest_asset, 2))} 원')
 

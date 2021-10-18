@@ -31,7 +31,8 @@ class Event():
         return self.status
 
     def update_info(self, price, avg_price, amount, profit_rate):
-        info = f'현재가: {price} | 평단가: {avg_price} | 평가손익 : {round(((avg_price*amount) * profit_rate)/100, 2)} | 수익률 : {profit_rate} %'
+        invest_asset = round(avg_price * amount, 2)
+        info = f'현재가: {price}원 | 평단가: {avg_price}원 | 평가금액 : {invest_asset}원 | 평가손익 : {round((invest_asset * profit_rate)/100, 2)}원 | 수익률 : {profit_rate} %'
         if self.ui_control == None:
             print('ui control is none')
         else:
