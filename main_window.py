@@ -63,8 +63,8 @@ class MainWindow(QMainWindow):
         self.profit_info.setText(info)
 
     def update_progress(self, max, count):
-        var = 100 / max
-        self.progressbar.setValue(var * count)
+        var = int((100 / max) * count)
+        self.progressbar.setValue(var)
 
     def set_table_data(self, couple_list):
         header = couple_list[0] + HEADER_SUFFIX
