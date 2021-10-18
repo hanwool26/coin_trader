@@ -1,9 +1,6 @@
 import pyupbit
 import logging
-
-KRW = 'KRW'
-BTC = 'BTC'
-market_info = pyupbit.fetch_market()
+from src.util import market_info, KRW
 
 class Coin:
     def __init__(self, name):

@@ -1,8 +1,13 @@
 import os
+import logging
 import pyupbit
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), '../data')
 UI_PATH = os.path.join(os.path.dirname(__file__), '../ui')
+market_info = pyupbit.fetch_market()
+
+KRW = 'KRW'
+BTC = 'BTC'
 
 def get_increase_rate(current_price, base_price):
     if base_price == 0 or base_price == None or current_price == None:
@@ -64,6 +69,21 @@ def price_round(price):
 def util_strip(string):
     string = string.split()
     return int(string[0])
+
+def get_price_by_name(name):
+    ticker = None
+    for attr in market_info:
+        if name == attr['korean_name']:
+            if KRW in attr['market']:
+                ticker = attr['market']
+                break
+
+    if ticker == None:
+        logging.getLogger('LOG').warn(f'no found {name} in market list')
+    else:
+        return pyupbit.get_current_price(ticker)
+
+
 
 
 

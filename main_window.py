@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
-from src.util import UI_PATH, util_strip
+from src.util import UI_PATH, util_strip, get_price_by_name
 from src import log
 import os
 import sys
@@ -22,7 +22,6 @@ class MainWindow(QMainWindow):
 
         icon_path = os.path.join(UI_PATH, 'Bitcoin_Cash.png')
         self.setWindowIcon(QIcon(icon_path))
-        self.setGeometry(300,300,300,300)
 
         self.manager_handler = None
         self.sel_id = list()
@@ -51,7 +50,7 @@ class MainWindow(QMainWindow):
 
         # coin list combo box
         self.coin_combobox = self.findChild(QComboBox, 'coin_comboBox')
-        # self.coin_combobox.currentIndexChanged.connect(self.handle_coin_combobox)
+        self.coin_combobox.currentIndexChanged.connect(self.handle_coin_combobox)
         self.interval_combobox = self.findChild(QComboBox, 'interval_comboBox')
         self.asset_rate_combobox = self.findChild(QComboBox, 'asset_rate_comboBox')
         self.asset_rate_combobox.currentIndexChanged.connect(self.handle_asset_rate_combobox)
@@ -96,6 +95,9 @@ class MainWindow(QMainWindow):
         self.asset_rate_combobox.setCurrentText('자산 비율')
 
     def handle_coin_combobox(self):
+        current_coin = self.coin_combobox.currentText()
+        current_price = get_price_by_name(current_coin)
+        self.profit_info.setText(f'현재가 : {current_price}원')
         pass
 
     def handle_asset_rate_combobox(self):
