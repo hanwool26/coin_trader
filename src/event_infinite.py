@@ -88,11 +88,13 @@ class EventInfinite(Event, threading.Thread):
 
     def order_buy(self, buying_asset, buying_price):
         # order buy
+        ret = False
         cur_price = self.coin.get_current_price()
         above_tick_price = get_above_tick_price(cur_price)
         if cur_price <= buying_price:
             buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
             ret = self.do_buy(above_tick_price, buying_amount)
+
         return ret
 
     def __trading(self):
