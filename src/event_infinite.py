@@ -6,16 +6,17 @@ import threading
 
 INTERVAL = 60 * TIME_OUT # minutes
 PER_BUY = 40 # divided by 40
+BUY_PERCENT = [1, 1.05] # AVG_PRICE, AVG_PRICE * 5%
 
-class EventInfinite(Event):
+class EventInfinite(Event, threading.Thread):
     def __init__(self, idx, account, main_window):
+        threading.Thread.__init__(self)
         self.ev_id = idx
         self.account = account
         self.ui_control = main_window
         coin_name = self.ui_control.coin_combobox.currentText()
 
         self.coin = Coin(coin_name)
-        self.__running = False
         self.RATIO_BUY = 1/PER_BUY
 
         self.interval = self.get_interval()
@@ -24,9 +25,13 @@ class EventInfinite(Event):
         self.avg_price = 0
         self.total_amount = 0
 
+        self.t_condition = threading.Condition()
+
+        self.repeat = False
+        self.__running = False
         self.threads = [
-            threading.Thread(target=self.__trading),
-            threading.Thread(target=self.__show_info),
+            threading.Thread(target=self.__trading, daemon=True),
+            threading.Thread(target=self.__show_info, daemon=True),
         ]
 
     def get_interval(self):
@@ -46,11 +51,8 @@ class EventInfinite(Event):
                     self.buy_count += 1
                     self.total_amount += amount
                     self.avg_price = get_avg_price(self.avg_price, price, self.buy_count)
-                    logging.getLogger('LOG').info(f'매수 성공, 진행 : {self.buy_count}')
                     return True
                 time.sleep(1)
-
-            logging.getLogger('LOG').info('매수 실패 : 체결 타임 아웃')
             return False
         except Exception as e:
             logging.getLogger('LOG').error(ret['error']['message'])
@@ -62,6 +64,7 @@ class EventInfinite(Event):
             logging.getLogger('LOG').info('잔고 부족')
             return
         each_asset = round(self.balance * self.RATIO_BUY, 2)
+        print(f'분할 매수액 : {each_asset}')
 
         cur_price = self.coin.get_current_price()
         self.avg_price = cur_price = get_above_tick_price(cur_price)  # 호가 위 매수
@@ -83,16 +86,14 @@ class EventInfinite(Event):
         ret = self.do_sell(self.coin.ticker, selling_price, self.total_amount)  # 매도
         return ret['uuid']
 
-    def order_buy(self, buying_asset):
+    def order_buy(self, buying_asset, buying_price):
         # order buy
         cur_price = self.coin.get_current_price()
         above_tick_price = get_above_tick_price(cur_price)
-        if cur_price <= self.avg_price:
+        if cur_price <= buying_price:
             buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
-            self.do_buy(above_tick_price, buying_amount)
-        if cur_price <= self.avg_price * 1.05:
-            buying_amount = get_buying_amount(buying_asset, above_tick_price, 1)
-            self.do_buy(above_tick_price, buying_amount)
+            ret = self.do_buy(above_tick_price, buying_amount)
+        return ret
 
     def __trading(self):
         buying_asset = self.init_trade()
@@ -106,10 +107,11 @@ class EventInfinite(Event):
             if self.account.order_status(uuid) == 'done':
                 logging.getLogger('LOG').info('매도 성공')
                 self.close()
-                self.start()
             else:
                 self.account.cancel_order(uuid)
-                self.order_buy(buying_asset)
+                for percent in BUY_PERCENT:
+                    ret = self.order_buy(buying_asset, self.avg_price*percent)
+                    logging.getLogger('LOG').info(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
 
             self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
@@ -127,13 +129,34 @@ class EventInfinite(Event):
     def close(self):
         logging.getLogger('LOG').info('무한 매수 종료')
         self.__running = False
+        self.repeat = False
         self.avg_price = self.buy_count = self.total_amount = 0
         self.update_progress(PER_BUY, self.buy_count)
+        with self.t_condition:
+            self.t_condition.notifyAll()
 
-    def start(self):
+    def close_thread(self):
+        self.repeat = False
+        self.close()
+
+    def run(self):
         if self.interval == None:
             return
-        logging.getLogger('LOG').info(f'무한 매수 시작 : {self.coin.name}, Interval : {self.interval//INTERVAL} 시간, 투자금액 : {self.balance} 원')
         self.__running = True
-        for t in self.threads:
-            t.start()
+        self.repeat = self.ui_control.repeat_checkbox.isChecked()
+        logging.getLogger('LOG').info(f'무한 매수 시작 : {self.coin.name}, 반복: {self.repeat}, Interval : {self.interval//INTERVAL} 시간, 투자금액 : {self.balance} 원')
+        while True:
+            for t in self.threads:
+                t.start()
+
+            with self.t_condition:
+                self.t_condition.wait()
+
+            if self.repeat == False:
+                break
+            time.sleep(1)
+
+        print('exit main thread of infinite trade')
+
+
+
