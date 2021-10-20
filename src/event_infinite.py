@@ -5,7 +5,6 @@ import logging
 import threading
 
 INTERVAL = 60 * TIME_OUT # minutes
-PER_BUY = 40 # divided by 40
 BUY_PERCENT = [1, 1.05] # AVG_PRICE, AVG_PRICE * 5%
 
 class EventInfinite(Event, threading.Thread):
@@ -14,9 +13,9 @@ class EventInfinite(Event, threading.Thread):
         self.ev_id = idx
         self.account = account
         self.ui_control = main_window
-        coin_name = self.ui_control.coin_combobox.currentText()
+        self.coin_name = self.ui_control.coin_combobox.currentText()
 
-        self.coin = Coin(coin_name)
+        self.coin = Coin(self.coin_name)
         self.RATIO_BUY = 1/PER_BUY
 
         self.interval = self.get_interval()
@@ -73,7 +72,7 @@ class EventInfinite(Event, threading.Thread):
             self.close()
             return None
 
-        self.update_progress(PER_BUY, self.buy_count)
+        # self.update_progress(PER_BUY, self.buy_count)
         self.ui_control.show_asset_info()
         return each_asset
 
@@ -115,7 +114,7 @@ class EventInfinite(Event, threading.Thread):
                     ret = self.order_buy(buying_asset, self.avg_price*percent)
                     logging.getLogger('LOG').info(f'매수 성공, 진행 : {self.buy_count}' if ret == True else f'매수 실패 : 타임아웃')
 
-            self.update_progress(PER_BUY, self.buy_count)
+            # self.update_progress(PER_BUY, self.buy_count)
             self.ui_control.show_asset_info()
             time.sleep(1)
 
@@ -125,15 +124,17 @@ class EventInfinite(Event, threading.Thread):
     def __show_info(self):
         while self.__running:
             cur_price = self.coin.get_current_price()
-            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price))
+            self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price), self.buy_count)
             time.sleep(0.5)
 
     def close(self):
         logging.getLogger('LOG').info('무한 매수 종료')
         self.__running = False
         self.repeat = False
-        self.avg_price = self.buy_count = self.total_amount = 0
-        self.update_progress(PER_BUY, self.buy_count)
+        cur_price = self.avg_price = self.buy_count = self.total_amount = 0
+        self.update_info(cur_price, self.avg_price, self.total_amount, get_increase_rate(cur_price, self.avg_price),
+                         self.buy_count)
+        # self.update_progress(PER_BUY, self.buy_count)
         with self.t_condition:
             self.t_condition.notifyAll()
 

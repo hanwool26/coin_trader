@@ -7,11 +7,15 @@ import os
 import sys
 import logging
 
-HEADER_SUFFIX = ('진행상태', )
+COUPLE_HEADER = ('선두코인', '후발코인', '결속력', '가격대', '비고', '진행상태', )
 # for test couple_list = [('선두코인', '후발코인'), ('이더', '비트'), ('리플', '슨트'), ('리플', '스텔라')]
+INFINITE_HEADER = ('코인', '현재가', '평단가', '평가금액', '평가손익', '수익률', '진행상태')
+INFINITE_INTERVAL = [1,3,6,9,12,24]
+ASSET_RATES = [10, 25, 50, 100]
+
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, couple_list):
         super(MainWindow, self).__init__()
 
         if getattr(sys, 'frozen', False):
@@ -23,6 +27,8 @@ class MainWindow(QMainWindow):
         icon_path = os.path.join(UI_PATH, 'Bitcoin_Cash.png')
         self.setWindowIcon(QIcon(icon_path))
 
+        self.couple_list = couple_list
+
         self.manager_handler = None
         self.sel_id = list()
         self.trade = 'infinite'
@@ -30,6 +36,7 @@ class MainWindow(QMainWindow):
 
         self.list_view = self.findChild(QTableWidget, 'list_view')
         self.list_view.cellClicked.connect(self.cellclicked_event)
+        self.max_row_count = 0
 
         self.trade_btn = self.findChild(QPushButton, 'trade_btn')
         self.trade_btn.clicked.connect(self.trade_btn_event)
@@ -55,9 +62,9 @@ class MainWindow(QMainWindow):
         self.asset_rate_combobox = self.findChild(QComboBox, 'asset_rate_comboBox')
         self.asset_rate_combobox.currentIndexChanged.connect(self.handle_asset_rate_combobox)
 
-        self.progressbar = self.findChild(QProgressBar, 'progressBar')
-        self.progressbar.setValue(0)
-        self.progressbar.setFormat('무한 매수 진행률')
+        # self.progressbar = self.findChild(QProgressBar, 'progressBar')
+        # self.progressbar.setValue(0)
+        # self.progressbar.setFormat('무한 매수 진행률')
 
         self.update_asset_menu = self.findChild(QAction, 'update_asset_menu')
         self.update_asset_menu.triggered.connect(self.show_asset_info)
@@ -78,21 +85,29 @@ class MainWindow(QMainWindow):
         self.progressbar.setValue(count)
         self.progressbar.setFormat('진행률 : %v/%m')
 
-    def set_table_data(self, couple_list):
-        header = couple_list[0] + HEADER_SUFFIX
+    def set_coule_table(self, couple_list):
+        self.list_view.clear()
+        header = COUPLE_HEADER
         self.list_view.setColumnCount(len(header))
         self.list_view.setHorizontalHeaderLabels(header)
-        del couple_list[0]
         num_of_list = len(couple_list)
         self.list_view.setRowCount(num_of_list)
 
         for rownum, row in enumerate(couple_list):
             for col, val in enumerate(row):
-                self.item_update(rownum, col, val)
+                self.couple_item_update(rownum, col, val)
+
+
+    def set_infinite_table(self):
+        self.list_view.clear()
+        header = INFINITE_HEADER
+        self.list_view.setColumnCount(len(header))
+        self.list_view.setHorizontalHeaderLabels(header)
+
+        self.list_view.setRowCount(self.max_row_count)
 
     def set_asset_rate_combobox(self):
-        asset_rates = [10, 25, 50, 100]
-        for rate in asset_rates:
+        for rate in ASSET_RATES:
             self.asset_rate_combobox.addItem(f'{str(rate)} %')
         self.asset_rate_combobox.setCurrentText('자산 비율')
 
@@ -113,12 +128,18 @@ class MainWindow(QMainWindow):
             self.coin_combobox.addItem(coin)
 
     def set_interval_combobox(self):
-        interval = [1,3,6,9,12,24]
-        for time in interval:
+        for time in INFINITE_INTERVAL:
             self.interval_combobox.addItem(f'{time} 시간')
         self.interval_combobox.setCurrentText('Interval')
 
-    def item_update(self, row, col, val):
+    def infinite_item_update(self, row, val: list):
+        self.list_view.setRowCount(self.max_row_count)
+        for idx, attr in enumerate(val):
+            item = QTableWidgetItem(str(attr))
+            if item !=None:
+                self.list_view.setItem(row, idx, item)
+
+    def couple_item_update(self, row, col, val):
         item = QTableWidgetItem(val)
         if item != None:
             self.list_view.setItem(row,col,item)
@@ -136,8 +157,10 @@ class MainWindow(QMainWindow):
     def radio_btn_event(self):
         if self.couple_r_btn.isChecked():
             self.trade = 'couple'
+            self.set_coule_table(self.couple_list)
         elif self.infinite_r_btn.isChecked():
             self.trade = 'infinite'
+            self.set_infinite_table()
 
     def set_manager_handler(self, manager):
         self.manager_handler = manager

@@ -7,7 +7,8 @@ class Manager:
         self.account = account
         self.main_window = main_window
         self.couple_event = list()
-        self.infinite_event = None
+        self.infinite_event = list()
+        self.infinite_idx = 0
         if couple_list is not None:
             self.init_eventcouple(couple_list)
 
@@ -21,13 +22,15 @@ class Manager:
             for idx in selected_id:
                 self.couple_event[idx].start()
         elif trade == 'infinite':
-            self.infinite_event = EventInfinite(0, self.account, self.main_window)
-            self.infinite_event.start()
+            self.infinite_event.insert(self.infinite_idx, EventInfinite(self.infinite_idx, self.account, self.main_window))
+            self.infinite_event[self.infinite_idx].start()
+            self.infinite_idx += 1
+            self.main_window.max_row_count = self.infinite_idx
 
     def do_stop(self, selected_id: list, trade):
         if trade == 'couple':
             for idx in selected_id:
                 self.couple_event[idx].close_thread()
         elif trade == 'infinite':
-            self.infinite_event.close()
-            pass
+            for idx in selected_id:
+                self.infinite_event[idx].close_thread()

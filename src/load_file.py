@@ -21,6 +21,7 @@ class LoadFile:
             # del couple_list[0] # delete header in couple_list
             #for attr in couple_list:
             #    print(attr)
+        del couple_list[0] # delete HEADER
 
         return couple_list
 
