@@ -12,8 +12,13 @@ import qdarkstyle
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    mywindow = MainWindow()
+
+    files = LoadFile('couple_coin_list.xlsx')
+    couple_list = files.get_couple_list()
+
+    mywindow = MainWindow(couple_list)
     mywindow.setWindowTitle('DreamCoin')
+    mywindow.set_infinite_table()
 
     config = Config()
     config.load_config()
@@ -21,11 +26,8 @@ if __name__ == '__main__':
     my_account = Account(access_key, secret_key)
     my_account.connect_account()
 
-    files = LoadFile('couple_coin_list.xlsx')
-    couple_list = files.get_couple_list()
-
     # load UI items from file and set the list on listView
-    mywindow.set_table_data(couple_list)
+    # mywindow.set_table_data(couple_list)
     mywindow.set_coin_combobox(get_coin_list())
     mywindow.set_interval_combobox()
 
