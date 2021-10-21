@@ -5,7 +5,7 @@ from src.event_couple import *
 
 STATUS_HEADER = 5 # columm number
 TIME_OUT = 60
-PER_BUY = 20 # divided by 40
+PER_BUY = 40 # divided by 40
 
 class Event():
     def __init__(self):

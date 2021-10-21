@@ -47,7 +47,7 @@ class EventInfinite(Event, threading.Thread):
 
             for sec in range(TIME_OUT+1):
                 if self.account.order_status(uuid) == 'done':
-                    self.buy_count += 1
+                    self.buy_count += 0.5
                     self.total_amount += amount
                     self.avg_price = get_avg_price(self.avg_price, price, self.buy_count)
                     return True

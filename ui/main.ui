@@ -56,37 +56,13 @@
       <item row="8" column="0" colspan="6">
        <widget class="QTextBrowser" name="log_view"/>
       </item>
-      <item row="1" column="3">
-       <widget class="QLineEdit" name="profit_lineEdit"/>
-      </item>
-      <item row="1" column="0" colspan="3">
+      <item row="1" column="1" colspan="2">
        <widget class="QComboBox" name="coin_comboBox">
         <property name="maxVisibleItems">
          <number>20</number>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="3">
-       <widget class="QPushButton" name="trade_btn">
-        <property name="text">
-         <string>매매시작</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="4" colspan="2">
-       <widget class="QPushButton" name="stop_btn">
-        <property name="text">
-         <string>매매정지</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QComboBox" name="asset_rate_comboBox">
-        <property name="editable">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -109,10 +85,41 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="profit_lineEdit"/>
+      </item>
+      <item row="0" column="4">
+       <widget class="QComboBox" name="asset_rate_comboBox">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="5">
        <widget class="QCheckBox" name="repeat_checkBox">
         <property name="text">
          <string>반복</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QPushButton" name="trade_btn">
+        <property name="text">
+         <string>매매시작</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="4" colspan="2">
+       <widget class="QPushButton" name="stop_btn">
+        <property name="text">
+         <string>매매정지</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>        코인</string>
         </property>
        </widget>
       </item>
